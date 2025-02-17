@@ -2,6 +2,7 @@ package com.example.todolist.repository;
 
 import com.example.todolist.model.Todolist;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,4 +13,5 @@ public interface TodolistRepository extends JpaRepository<Todolist, Long> {
     List<Todolist> findByTitleContainingIgnoreCase(String title);
     List<Todolist> findByCategoryId(Long categoryId);
     List<Todolist> findByUserId(UUID userId);
+    List<Todolist> findByImagePath(String ImagePath);
 }

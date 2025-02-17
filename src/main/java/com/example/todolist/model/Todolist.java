@@ -47,6 +47,9 @@ public class Todolist {
     @Column(name = "image_path")
     private String imagePath;
 
+    public void setImages(String imagePath) {
+        this.imagePath = imagePath;
+    }
 
     @PrePersist
     public void prePersist() {

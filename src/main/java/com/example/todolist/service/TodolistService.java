@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -199,6 +200,16 @@ public class TodolistService {
             throw new RuntimeException("Failed to search todolist by user id" + e.getMessage(),e);
         }
     }
+
+    public byte[] getImageBytes(String imagePath) {
+        try {
+            Path path = Path.of(imageDirectory + imagePath);
+            return Files.readAllBytes(path);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to read image file", e);
+        }
+    }
+
     private TodolistResponse convertToResponse(Todolist todolist){
         TodolistResponse response = new TodolistResponse();
         response.setId(todolist.getId());
@@ -214,4 +225,6 @@ public class TodolistService {
         response.setImagePath(todolist.getImagePath());
         return response;
     }
+
+
 }

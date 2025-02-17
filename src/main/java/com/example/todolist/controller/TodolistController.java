@@ -11,8 +11,10 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
@@ -116,5 +118,15 @@ public class TodolistController {
         List<TodolistResponse> todolists = todolistService.findByUserId(userId);
         return ResponseEntity.ok(new ApiResponse<>(200,todolists));
     }
+
+    @GetMapping("/imagePath/{ImagePath}")
+    public ResponseEntity<byte[]> getTodolistByImages(
+            @PathVariable("ImagePath") String ImagePath) {
+        byte[] imageBytes = todolistService.getImageBytes(ImagePath);
+        return ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_JPEG) // or other image type
+                .body(imageBytes);
+    }
+
 
 }
