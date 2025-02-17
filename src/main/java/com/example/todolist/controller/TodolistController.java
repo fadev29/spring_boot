@@ -24,8 +24,8 @@ public class TodolistController {
     @Autowired
     private TodolistService todolistService;
 
-    @PostMapping
-    public ResponseEntity<?> createTodolist(@Valid @RequestBody TodolistRequest request) {
+    @PostMapping(consumes = "multipart/form-data")
+    public ResponseEntity<?> createTodolist(@Valid @ModelAttribute @RequestBody TodolistRequest request) {
         try {
             TodolistResponse response = todolistService.create(request);
             return ResponseEntity.ok(new ApiResponse<>(200,response));
@@ -70,8 +70,8 @@ public class TodolistController {
         }
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateTodolist(@PathVariable Long id, @Valid @RequestBody TodolistRequest todolistRequest){
+    @PutMapping(value = "/{id}", consumes = "multipart/form-data")
+    public ResponseEntity<?> updateTodolist(@PathVariable Long id, @Valid @ModelAttribute @RequestBody TodolistRequest todolistRequest){
         try {
             TodolistResponse todolistResponse = todolistService.update(id,todolistRequest);
             return ResponseEntity

@@ -16,7 +16,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -32,6 +35,11 @@ public class TodolistService {
     @Autowired
     private CategoryRepository categoryRepository;
 
+    private static String imageDirectory = "src/main/resources/static/images/";
+
+    private static long maxFileSize = 5 * 1024 * 1024; // 5mb
+    private static String[] allowedFileTypes = {"image/jpeg", "image/png", "image/jpg"}; //format yang diizinkan
+
     @jakarta.transaction.Transactional
     public TodolistResponse create(TodolistRequest todolistRequest) {
         try {
@@ -45,7 +53,33 @@ public class TodolistService {
                             .orElseThrow(() -> new RuntimeException("Category not found"));
             todolist.setCategory(category);
             todolist.setIsCompleted(todolistRequest.getIsClompleted());
-            todolist.setImagePath(todolistRequest.getImagePath());
+            if(todolistRequest.getImagePath() != null && !todolistRequest.getImagePath().isEmpty()) {
+                MultipartFile file = todolistRequest.getImagePath();
+
+                if(file.getSize() > maxFileSize) {
+                    throw new RuntimeException("File size exceeds the maximum limit of " + maxFileSize / (1024 * 1024) + "MB");
+                }
+
+                String fileType = file.getContentType();
+                boolean isValidType = false;
+                for (String allowedType : allowedFileTypes) {
+                    if (allowedType.equals(fileType)) {
+                        isValidType = true;
+                        break;
+                    }
+                }
+
+                if(!isValidType) {
+                    throw new RuntimeException("Invalid file type. Only JPEG, PNG, and JPG files are allowed.");
+                }
+
+                String originalFilename = file.getOriginalFilename();
+                String customFileName = "todolist_image" + "_" + originalFilename;
+
+                Path path = Path.of(imageDirectory + customFileName);
+                Files.copy(file.getInputStream(), path);
+                todolist.setImagePath(customFileName);
+            }
             Todolist createdTodolist = todolistRepository.save(todolist);
             return convertToResponse(createdTodolist);
         } catch (DuplicateDataException e) {
@@ -86,8 +120,34 @@ public class TodolistService {
                     .orElseThrow(() -> new RuntimeException("Category not found"));
             todolist.setCategory(category);
             todolist.setIsCompleted(todolistRequest.getIsClompleted());
-            todolist.setImagePath(todolistRequest.getImagePath());
-            Todolist createdTodolist = todolistRepository.save(todolist);
+            if(todolistRequest.getImagePath() != null && !todolistRequest.getImagePath().isEmpty()) {
+                MultipartFile file = todolistRequest.getImagePath();
+
+
+                if(file.getSize() > maxFileSize) {
+                    throw new RuntimeException("File size exceeds the maximum limit of " + maxFileSize / (1024 * 1024) + "MB");
+                }
+
+                String fileType = file.getContentType();
+                boolean isValidType = false;
+                for (String allowedType : allowedFileTypes) {
+                    if (allowedType.equals(fileType)) {
+                        isValidType = true;
+                        break;
+                    }
+                }
+
+                if(!isValidType) {
+                    throw new RuntimeException("Invalid file type. Only JPEG, PNG, and JPG files are allowed.");
+                }
+
+                String originalFilename = file.getOriginalFilename();
+                String customFileName = "todolist_image" + "_" + originalFilename;
+
+                Path path = Path.of(imageDirectory + customFileName);
+                Files.copy(file.getInputStream(), path);
+                todolist.setImagePath(customFileName);
+            }            Todolist createdTodolist = todolistRepository.save(todolist);
             return convertToResponse(createdTodolist);
 
         } catch (DuplicateDataException e) {

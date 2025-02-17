@@ -2,6 +2,7 @@ package com.example.todolist.dto.request;
 
 import jakarta.validation.constraints.*;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -14,5 +15,5 @@ public class TodolistRequest {
    private Long categoryId;
    private Boolean isClompleted;
    private LocalDateTime deleteAt;
-   private String imagePath;
+   private MultipartFile imagePath;
 }
