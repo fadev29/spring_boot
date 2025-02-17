@@ -3,6 +3,8 @@ package com.example.todolist.model;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
+import java.util.List;
+
 @Data // anotasi lombok buat bikin geterr otomatis
 @AllArgsConstructor // buat constructor yang membuhtukan semua field(argument)
 @NoArgsConstructor  // buat constructor tampah argument
@@ -22,6 +24,8 @@ public class Category {
 @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+@OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
+private List<Todolist> todolists;
 @PrePersist // anotasi buat data waktu secara otomatis ketika data pertama kali di buat
     public void prePersits(){
     this.createdAt = LocalDateTime.now();

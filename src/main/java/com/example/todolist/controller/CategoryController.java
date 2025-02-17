@@ -74,8 +74,8 @@ public class CategoryController {
     }
 
     @GetMapping("/name")
-    public ResponseEntity<?>getCategoryByName(@RequestParam String categoryname) {
-            Optional<CategoryResponse> categoryResponse = categoryService.findByName(categoryname);
+    public ResponseEntity<?>getCategoryByName(@RequestParam String name) {
+            Optional<CategoryResponse> categoryResponse = categoryService.findByName(name);
             return ResponseEntity.status(HttpStatus.OK.value())
                     .body(new ApiResponse<>(HttpStatus.OK.value(), categoryResponse));
     }

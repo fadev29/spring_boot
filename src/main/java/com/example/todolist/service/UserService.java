@@ -56,7 +56,7 @@ public class UserService {
     public UserResponse update(String username, UserRequest userRequest) {
         try {
             User user = userRepository.findByUsername(username)
-                    .orElseThrow(() -> new DataNotFoundException("User with ID " + username+ " not found"));
+                    .orElseThrow(() -> new DataNotFoundException("User with Name " + username+ " not found"));
 
             // Cek apakah username sudah digunakan oleh user lain
             userRepository.findByUsername(userRequest.getUsername()).ifPresent(existingUser -> {
