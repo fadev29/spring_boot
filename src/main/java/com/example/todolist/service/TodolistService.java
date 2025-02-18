@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -101,7 +102,7 @@ public class TodolistService {
     public Page<TodolistResponse> findAll(int page, int size){
         try{
             Pageable pageable = PageRequest.of(page,size);
-            org.springframework.data.domain.Page<Todolist> todolists = todolistRepository.findAll(pageable);
+            org.springframework.data.domain.Page<Todolist> todolists = todolistRepository.findAllByDeletedIsNull(pageable);
             return todolists.map(this::convertToResponse);
         }catch (Exception e){
             throw new RuntimeException("Failed to ret"+e.getMessage(),e);
@@ -157,6 +158,8 @@ public class TodolistService {
             throw new RuntimeException("Failed to create user", e);
         }
     }
+
+    // hard delete
 @Transactional
     public void delete(Long id) {
         try {
@@ -164,6 +167,25 @@ public class TodolistService {
                 throw new DataNotFoundException("Todolist with ID"+id+" not found");
             }
             todolistRepository.deleteById(id);
+        }catch (DataNotFoundException e){
+            throw e;
+        }catch (Exception e){
+            throw new RuntimeException("failed to delete todolist"+ e.getMessage(),e);
+        }
+    }
+
+    // soft delete
+    public void softDelete(Long id) {
+        try {
+            // existsById buat mengecek sebuah data
+            if(!todolistRepository.existsById(id)){
+                throw new DataNotFoundException("Todolist with ID"+id+" not found");
+            }
+            //orElseThrow(() -> new DataNotFoundException("Todolist with ID"+id+" not found"))  untuk manampikkan data nya kalau tidak ada
+            Todolist todolist = todolistRepository.findById(id).orElseThrow(() -> new DataNotFoundException("Todolist with ID"+id+" not found"));
+            // ketika data di deleted akan menampilkan waktu data di hapus.
+            todolist.setDeleted(LocalDateTime.now());
+            todolistRepository.save(todolist);
         }catch (DataNotFoundException e){
             throw e;
         }catch (Exception e){
@@ -198,15 +220,6 @@ public class TodolistService {
                     .collect(Collectors.toList());
         }catch (Exception e){
             throw new RuntimeException("Failed to search todolist by user id" + e.getMessage(),e);
-        }
-    }
-
-    public byte[] getImageBytes(String imagePath) {
-        try {
-            Path path = Path.of(imageDirectory + imagePath);
-            return Files.readAllBytes(path);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to read image file", e);
         }
     }
 
