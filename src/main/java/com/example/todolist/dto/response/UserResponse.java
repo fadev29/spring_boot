@@ -8,10 +8,10 @@ public class UserResponse {
     private UUID id;
     private String username;
     private String email;
-    private String password;
     private String role;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private String token;
 
 
 }

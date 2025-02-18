@@ -4,11 +4,16 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.function.Function;
-
+// file ini nyediain method dari jwt
+// nyediain method2 untuk keperluan nanti autentikasi
+@Component
 public class JwtUtil {
+    // secret key : sebagai kunci masuk untuk
     @Value("${jwt.secret}")
     public String secretKey;
 
@@ -43,8 +48,9 @@ public class JwtUtil {
                 .compact();
     }
 
-    public Boolean validateToken(String token, String username) {
+    // validasi token dan user yang dikirim
+    public Boolean validateToken(String token, UserDetails userDetails) {
         final String username1 = extractUsername(token);
-        return (username.equals(username1) && !isTokenExpired(token));
+        return username1.equals (userDetails.getUsername()) && !isTokenExpired(token);
     }
 }

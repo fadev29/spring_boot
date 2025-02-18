@@ -14,7 +14,8 @@ import java.util.Collections;
 @Data
 public class CustomUserDetails implements UserDetails {
     private final User user;
-
+    // CustomUserDetail : class implementasi dari UserDetails
+    // untuk kebutuhan kostumisasi method,dalam kasus ini override method getAuthorities
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singleton(new SimpleGrantedAuthority("ROLE_" + user.getRole()));

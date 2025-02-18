@@ -1,0 +1,12 @@
+auth step
+1. create model
+2.create repository
+3.create dto
+4.create method loadByUsername service/UserService
+4.create security/CustomUserDetails khusus otorisasi
+5.create util/JwtUtil
+6.create config/JwtRequestFilter
+7.create config/SecurityConfig
+8.create service/UserService
+9.create controller.UserController
+10.test postman
